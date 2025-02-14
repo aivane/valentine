@@ -1,18 +1,37 @@
 <script setup>
 import { ref } from 'vue'
 
+// สร้างตัวแปร reactive
 const isClicked = ref(false)
+const audioRef = ref(null) // อ้างอิง <audio>
 
+// เมื่อคลิกที่หัวใจ
 const handleClick = () => {
   isClicked.value = !isClicked.value
+  if (audioRef.value) {
+    if (isClicked.value) {
+      audioRef.value.currentTime = 60
+      audioRef.value.volume = 0.05
+      audioRef.value.play().catch(() => {
+        console.log('Autoplay ถูกบล็อก ให้ user กดคลิกเพื่อเริ่มเพลง')
+      })
+    } else {
+      audioRef.value.pause() // หยุดเพลงเมื่อคลิกที่หัวใจ
+    }
+  }
 }
 </script>
 
 <template>
+  <!-- Audio Player -->
+  <audio ref="audioRef" loop>
+    <source src="./MEYOU.mp3" type="audio/mp3" />
+  </audio>
+
   <div
     class="flex justify-center items-center h-screen relative bg-gradient-to-r from-pink-400 via-red-500 to-yellow-500"
   >
-    <!-- ข้อความ Happy Valentine Day อยู่ข้างหลังหัวใจ -->
+    <!-- ข้อความ Happy Valentine Day -->
     <div
       class="absolute text-0xl font-extrabold text-white drop-shadow-lg p-4 rounded-lg z-0 transition-transform duration-700 ease-in-out"
       :class="{ '-translate-y-80': isClicked, 'text-3xl': isClicked }"
@@ -33,7 +52,7 @@ const handleClick = () => {
     />
   </div>
 
-  <!-- รูป S1 และ S2 ที่อยู่กลางจอ -->
+  <!-- รูป S1 และ S2 -->
   <TransitionGroup name="fade">
     <div
       v-if="isClicked"
